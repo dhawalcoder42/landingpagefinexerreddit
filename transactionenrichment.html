@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Enrichment API: Verified Merchant Data | Finexer</title>
+<meta name="description" content="Transaction enrichment API returning merchant names, categories and locations with 95%+ accuracy in under 100ms across 100M+ merchants.">
+<meta name="robots" content="noindex, follow"><!-- Campaign LP: confirm noindex decision with Rayaan before launch -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --periwinkle:#4B5FD8;
+  --periwinkle-deep:#3B4EC4;
+  --brand-blue:#3057C3;
+  --brand-deep:#004AAD;
+  --ink:#0F172A;
+  --body:#3A4256;
+  --paper:#F7F8FC;
+  --line:#E3E7F4;
+  --raw-bg:#3E51C9;
+  --ok:#34D399;
+  --hero-soft:#C7D0F5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--body);background:#fff;font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Archivo',sans-serif;color:var(--ink);line-height:1.12}
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* ---------- Header ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(75,95,216,.92);backdrop-filter:blur(10px)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none}
+.wordmark span{font-family:'Archivo',sans-serif;font-weight:700;font-size:24px;color:#fff;letter-spacing:-.02em}
+.btn{display:inline-block;font-family:'Archivo',sans-serif;font-weight:600;font-size:16px;text-decoration:none;border-radius:10px;padding:13px 26px;transition:transform .15s ease, box-shadow .15s ease}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.btn-light{background:#fff;color:var(--brand-blue)}
+.btn-light:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(15,23,42,.22)}
+.btn-nav{padding:10px 20px;font-size:15px}
+
+/* ---------- Hero ---------- */
+.hero{
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.06), rgba(0,0,0,.10)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.055) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.055) 0 1px, transparent 1px 72px),
+    linear-gradient(150deg, #5266DE 0%, var(--periwinkle) 45%, var(--periwinkle-deep) 100%);
+  color:#fff;
+  padding:72px 0 96px;
+  overflow:hidden;
+}
+.badge{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.10);border-radius:999px;padding:9px 18px;font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#fff}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;letter-spacing:-.025em;margin:26px 0 0;color:#fff;max-width:16ch}
+.hero h1 .soft{color:var(--hero-soft);display:block}
+.hero .sub{margin-top:22px;font-size:20px;line-height:1.6;color:#E4E9FD;max-width:56ch}
+.hero-cta-row{margin-top:34px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.hero-cta-row .aside{font-size:15px;color:#D6DDFB}
+
+/* Enrichment stream: the ad showed one card. The page shows the feed resolving. */
+.stream{margin-top:56px;display:grid;gap:16px;max-width:860px}
+.txn{display:grid;grid-template-columns:1fr 40px 1.15fr;gap:16px;align-items:stretch}
+.raw{background:var(--raw-bg);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;color:#E9EDFF}
+.raw .lab{font-size:11px;letter-spacing:.24em;color:#B9C4F5;display:block;margin-bottom:8px;font-weight:600}
+.raw .amt{color:#AAB6EF}
+.arrow{display:flex;align-items:center;justify-content:center;color:#fff;opacity:.85}
+.clean{background:#fff;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;box-shadow:0 18px 44px rgba(10,16,40,.30);opacity:0;transform:translateX(14px);transition:opacity .55s ease,transform .55s ease}
+.clean.resolved{opacity:1;transform:none}
+.clean .m-icon{flex:none;width:46px;height:46px;border-radius:12px;background:#EDF1FC;display:flex;align-items:center;justify-content:center;font-size:22px}
+.clean .m-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;color:var(--ink)}
+.clean .m-amt{font-size:14.5px;color:var(--body)}
+.tags{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tag{background:#EDF1FC;color:var(--brand-blue);font-size:12.5px;font-weight:600;border-radius:999px;padding:6px 13px;white-space:nowrap}
+.latency{margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#D6DDFB}
+.latency b{color:var(--ok);font-weight:600}
+
+/* stat strip bridging hero and body */
+.stat-strip{background:var(--ink);color:#fff}
+.stat-strip .container{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding-top:44px;padding-bottom:44px}
+.sstat{border-left:2px solid var(--brand-blue);padding-left:20px}
+.sstat .num{font-family:'Archivo',sans-serif;font-size:36px;font-weight:800;letter-spacing:-.02em}
+.sstat .lab{margin-top:4px;font-size:14.5px;color:#C9D2EA}
+
+/* ---------- Sections ---------- */
+section{padding:88px 0}
+.eyebrow{font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--brand-blue)}
+h2{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.02em;margin-top:12px}
+.lede{margin-top:18px;font-size:18.5px;max-width:64ch}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.alt{background:var(--paper)}
+.inline-link{color:var(--brand-blue);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.inline-link:hover{color:var(--brand-deep)}
+.mono-ex{font-family:'JetBrains Mono',monospace;font-size:15px;background:#EDF1FC;color:var(--brand-blue);border-radius:8px;padding:2px 8px;white-space:nowrap}
+
+.cards{margin-top:44px;display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;transition:transform .18s ease, box-shadow .18s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(48,87,195,.10)}
+.card h3{font-size:20px;font-weight:700;margin-bottom:8px}
+.card p{font-size:16px}
+.card .k{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--brand-blue);display:block;margin-bottom:14px;letter-spacing:.02em}
+
+.steps{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:step}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--brand-blue);background:#EDF1FC;border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:16px}
+.step h3{font-size:19px;font-weight:700;margin-bottom:8px}
+.step p{font-size:15.5px}
+
+/* trust band */
+.trust{background:var(--ink);color:#C9D2EA}
+.trust h2{color:#fff}
+.trust .eyebrow{color:#8FB6FF}
+.reg-row{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+.reg{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);border-radius:12px;padding:14px 20px;font-size:15px;font-weight:500;color:#fff}
+.why-list{margin-top:40px;display:grid;gap:14px;max-width:680px}
+.why-list li{list-style:none;display:flex;gap:14px;align-items:flex-start;font-size:17px;color:#fff;font-weight:500}
+.why-list li svg{flex:none;margin-top:3px}
+.quote-slot{margin-top:48px;border-left:3px solid var(--brand-blue);padding:6px 0 6px 24px;font-size:18px;color:#E4E9FD;font-style:italic}
+.quote-slot cite{display:block;margin-top:10px;font-style:normal;font-size:14.5px;color:#8FB6FF}
+
+/* FAQ */
+.faq{max-width:780px;margin-top:40px}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 4px;font-family:'Archivo',sans-serif;font-weight:600;font-size:19px;color:var(--ink)}
+summary::-webkit-details-marker{display:none}
+summary .plus{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--brand-blue);color:var(--brand-blue);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500;transition:transform .2s ease}
+details[open] .plus{transform:rotate(45deg)}
+details p{padding:0 4px 26px;max-width:66ch}
+
+/* final CTA */
+.final{background:linear-gradient(135deg,var(--brand-blue),var(--brand-deep));color:#fff;text-align:center;padding:96px 0}
+.final h2{color:#fff;max-width:24ch;margin:12px auto 0}
+.final p{margin:20px auto 0;max-width:58ch;color:#DCE6FB;font-size:18px}
+.final .btn{margin-top:34px}
+
+footer{background:var(--ink);color:#8B96B8;font-size:14px;padding:34px 0}
+footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  .reveal,.clean{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+@media (max-width:820px){
+  .cards,.steps,.stat-strip .container{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  section{padding:64px 0}
+  .hero{padding:56px 0 72px}
+  .txn{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg);padding:2px 0}
+  .tags{margin-left:0;justify-content:flex-start}
+  .clean{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="wordmark" href="#" aria-label="Finexer">
+      <svg width="30" height="26" viewBox="0 0 30 26" fill="none" aria-hidden="true">
+        <path d="M2 7.5 L11 2 L28 2 L28 8.5 L19.5 13.5 L28 13.5 L28 24 L11 24 L2 24 Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span>finexer</span>
+    </a>
+    <!-- CONFIRM final demo URL before launch; keep Reddit UTM params intact on inbound links -->
+    <a class="btn btn-light btn-nav" href="https://finexer.com/contact">Book a Demo</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <span class="badge"><span class="dot"></span>Data Enrichment</span>
+    <h1><span class="soft">Turn raw bank transactions</span>into clean merchant data</h1>
+    <p class="sub">Finexer's Data Enrichment delivers merchant identification, categorisation and location context for every transaction, with 95%+ accuracy and responses in under 100 milliseconds.</p>
+    <div class="hero-cta-row">
+      <a class="btn btn-light" href="https://finexer.com/contact">Book a Demo</a>
+      <span class="aside">100M+ merchants resolved</span>
+    </div>
+
+    <div class="stream" aria-label="Raw transactions resolving into enriched merchant data">
+      <div class="txn">
+        <div class="raw"><span class="lab">RAW</span>TFL TRAVEL CH 9924<br><span class="amt">&pound;2.80 &middot; GBP</span></div>
+        <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="clean">
+          <div class="m-icon" aria-hidden="true">&#128649;</div>
+          <div><div class="m-name">Transport for London</div><div class="m-amt">&pound;2.80</div></div>
+          <div class="tags"><span class="tag">Transport</span><span class="tag">London, UK</span></div>
+        </div>
+      </div>
+      <div class="txn">
+        <div class="raw"><span class="lab">RAW</span>TESCO STORES 3412<br><span class="amt">&pound;31.62 &middot; GBP</span></div>
+        <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="clean">
+          <div class="m-icon" aria-hidden="true">&#128722;</div>
+          <div><div class="m-name">Tesco</div><div class="m-amt">&pound;31.62</div></div>
+          <div class="tags"><span class="tag">Groceries</span><span class="tag">Leeds, UK</span></div>
+        </div>
+      </div>
+      <div class="txn">
+        <div class="raw"><span class="lab">RAW</span>DD PRT*A MNGR 044<br><span class="amt">&pound;6.45 &middot; GBP</span></div>
+        <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="clean">
+          <div class="m-icon" aria-hidden="true">&#129386;</div>
+          <div><div class="m-name">Pret A Manger</div><div class="m-amt">&pound;6.45</div></div>
+          <div class="tags"><span class="tag">Food &amp; Drink</span><span class="tag">Manchester, UK</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="latency">resolved in <b>&lt;100ms</b> per transaction</p>
+  </div>
+</div>
+
+<div class="stat-strip">
+  <div class="container">
+    <div class="sstat reveal"><div class="num">95%+</div><div class="lab">enrichment accuracy on merchant identification and categorisation</div></div>
+    <div class="sstat reveal"><div class="num">&lt;100ms</div><div class="lab">response time, so enrichment runs inline with your processing</div></div>
+    <div class="sstat reveal"><div class="num">100M+</div><div class="lab">merchants in a database maintained continuously by Finexer</div></div>
+  </div>
+</div>
+
+<section>
+  <div class="container two-col">
+    <div class="reveal">
+      <span class="eyebrow">The real problem</span>
+      <h2>Why do raw transaction strings cause so many problems?</h2>
+    </div>
+    <div class="reveal">
+      <p class="lede">A descriptor like <span class="mono-ex">DD PRT*A MNGR 044</span> tells your users nothing. It breaks automatic categorisation, generates support tickets asking what a charge was, and forces finance teams into manual matching during reconciliation.</p>
+      <p class="lede">Finexer's Data Enrichment resolves those strings against a database of more than 100 million merchants and returns the merchant name, category and location your product can actually display and act on.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Outcomes</span>
+      <h2>What does transaction enrichment remove from your workflow?</h2>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <span class="k">manual_tagging: removed</span>
+        <h3>No more hand-corrected categories</h3>
+        <p>Users stop re-labelling transactions your product should have understood. Categories arrive consistent and ready for reporting the moment the transaction lands.</p>
+      </div>
+      <div class="card reveal">
+        <span class="k">support_tickets: reduced</span>
+        <h3>Fewer &ldquo;what is this charge&rdquo; queries</h3>
+        <p>A named merchant with a category and location answers the question before it reaches your support queue, and reduces the disputes that start from confusion.</p>
+      </div>
+      <div class="card reveal">
+        <span class="k">reconciliation: improved</span>
+        <h3>Higher match rates in accounting workflows</h3>
+        <p>Clean merchant names and consistent categories give matching logic something reliable to work with, cutting the exceptions finance teams resolve by hand.</p>
+      </div>
+      <div class="card reveal">
+        <span class="k">analytics: consistent</span>
+        <h3>A stable base for spend insights</h3>
+        <p>Reporting and analytics features stop inheriting the mess of raw descriptors. Every downstream number is built on the same structured merchant data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Mechanism</span>
+      <h2>How does Finexer's Data Enrichment work?</h2>
+      <p class="lede">Enrichment happens inline with your existing transaction processing rather than as a batch job afterwards. The full breakdown of fields and behaviour is in the <a class="inline-link" href="https://blog.finexer.com/transaction-enrichment-api-finexer/">transaction enrichment API</a> guide.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <h3>Send the transaction</h3>
+        <p>Your platform passes a transaction through the API as part of its normal processing flow.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Finexer resolves it</h3>
+        <p>The raw string is matched against a continuously maintained database covering more than 100 million merchants, with accuracy above 95%.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Structured data returns</h3>
+        <p>The identified merchant, its category and its location come back in under 100 milliseconds, ready for display, categorisation or reconciliation logic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Fit</span>
+      <h2>Which platforms get the most from enrichment?</h2>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <h3>Accounting and ERP platforms</h3>
+        <p>Automatic categorisation that holds up at reconciliation time, so bookkeeping features work from clean merchant data instead of guesswork.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Payroll and invoicing tools</h3>
+        <p>Cleaner matching between payments and records, reducing the manual investigation that follows an unrecognised transaction line.</p>
+      </div>
+      <div class="card reveal">
+        <h3>EPOS and payment platforms</h3>
+        <p>Clear settlement and transaction visibility for merchants, with every line item identified rather than left as a processor string.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Utility billing platforms</h3>
+        <p>Incoming payments identified and matched to customer accounts, so billing teams spend less time investigating unrecognised transaction lines.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Trust and compliance</span>
+      <h2>Is the underlying bank data regulated and secure?</h2>
+      <p class="lede">Finexer is FCA-authorised as both an AISP and a PISP and operates to PSD2 requirements. Bank data used for enrichment is retrieved only with explicit customer consent, and customers can revoke that consent at any time.</p>
+    </div>
+    <div class="reg-row reveal">
+      <span class="reg">FCA-authorised &middot; FRN 925695</span>
+      <span class="reg">AISP + PISP</span>
+      <span class="reg">PSD2-compliant</span>
+      <span class="reg">Consent-driven access</span>
+    </div>
+    <ul class="why-list reveal">
+      <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>99% UK bank coverage feeding the transaction data layer</li>
+      <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>95%+ enrichment accuracy across 100M+ merchants</li>
+      <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Responses in under 100 milliseconds</li>
+      <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Usage-based pricing and white-label options</li>
+    </ul>
+    <!-- TESTIMONIAL SLOT: use the verified Penny (CCO, Sysynkt) quote only if its angle fits data quality or workflow accuracy. Otherwise leave this slot out entirely. Never use an unverified quote. -->
+    <blockquote class="quote-slot reveal">
+      [Verified customer quote placeholder]
+      <cite>Penny, CCO, Sysynkt</cite>
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Common questions</span>
+      <h2>What do teams ask before adding enrichment?</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>How accurate is the enrichment?<span class="plus">+</span></summary>
+        <p>Accuracy exceeds 95%, resolved against a database of more than 100 million merchants that Finexer maintains continuously.</p>
+      </details>
+      <details>
+        <summary>How fast are responses?<span class="plus">+</span></summary>
+        <p>Under 100 milliseconds, so enrichment runs inline with your transaction processing rather than as an overnight batch.</p>
+      </details>
+      <details>
+        <summary>What does the API return for each transaction?<span class="plus">+</span></summary>
+        <p>The identified merchant, its category and its location, in a structured format your product can display directly or feed into categorisation and reconciliation logic.</p>
+      </details>
+      <details>
+        <summary>Is it compliant to use bank transaction data this way?<span class="plus">+</span></summary>
+        <p>Yes. Finexer is FCA-authorised (FRN 925695) and PSD2-compliant. Bank data is accessed only under explicit customer consent, which the customer can revoke at any time.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="container">
+    <span class="badge"><span class="dot"></span>Data Enrichment</span>
+    <h2>Every transaction, named and categorised.</h2>
+    <p>If unreadable descriptors are creating support tickets, broken categorisation and manual reconciliation in your product, Finexer's Data Enrichment replaces them with named merchants, clean categories and locations in under 100 milliseconds.</p>
+    <a class="btn btn-light" href="https://finexer.com/contact">Book a Demo</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <span>&copy; 2026 Finexer. FCA-authorised, FRN 925695.</span>
+    <span>Bank data and payments infrastructure for UK platforms.</span>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Staggered resolve of the enrichment stream on load
+window.addEventListener('load', ()=>{
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.clean').forEach((el,i)=>{
+    if(reduce){ el.classList.add('resolved'); return; }
+    setTimeout(()=>el.classList.add('resolved'), 450 + i*420);
+  });
+});
+</script>
+</body>
+</html>
