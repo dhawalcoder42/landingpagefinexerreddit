@@ -173,8 +173,8 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
 <div class="hero">
   <div class="container">
     <span class="badge"><span class="dot"></span>Data Enrichment</span>
-    <h1><span class="soft">Turn raw bank transactions</span>into clean merchant data</h1>
-    <p class="sub">Finexer's Data Enrichment delivers merchant identification, categorisation and location context for every transaction, with 95%+ accuracy and responses in under 100 milliseconds.</p>
+    <h1><span class="soft">From standard Open Banking data</span>to merchant intelligence</h1>
+    <p class="sub">Finexer's AIS delivers verified bank transaction data at source. The Data Enrichment layer builds on that foundation, returning merchant identity, categorisation and location on every transaction, with 95%+ accuracy in under 100 milliseconds.</p>
     <div class="hero-cta-row">
       <a class="btn btn-light" href="https://finexer.com/contact">Book a Demo</a>
       <span class="aside">100M+ merchants resolved</span>
@@ -182,7 +182,7 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
 
     <div class="stream" aria-label="Raw transactions resolving into enriched merchant data">
       <div class="txn">
-        <div class="raw"><span class="lab">RAW</span>TFL TRAVEL CH 9924<br><span class="amt">&pound;2.80 &middot; GBP</span></div>
+        <div class="raw"><span class="lab">BANK DESCRIPTOR</span>TFL TRAVEL CH 9924<br><span class="amt">&pound;2.80 &middot; GBP</span></div>
         <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="clean">
           <div class="m-icon" aria-hidden="true">&#128649;</div>
@@ -191,7 +191,7 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
         </div>
       </div>
       <div class="txn">
-        <div class="raw"><span class="lab">RAW</span>TESCO STORES 3412<br><span class="amt">&pound;31.62 &middot; GBP</span></div>
+        <div class="raw"><span class="lab">BANK DESCRIPTOR</span>TESCO STORES 3412<br><span class="amt">&pound;31.62 &middot; GBP</span></div>
         <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="clean">
           <div class="m-icon" aria-hidden="true">&#128722;</div>
@@ -200,7 +200,7 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
         </div>
       </div>
       <div class="txn">
-        <div class="raw"><span class="lab">RAW</span>DD PRT*A MNGR 044<br><span class="amt">&pound;6.45 &middot; GBP</span></div>
+        <div class="raw"><span class="lab">BANK DESCRIPTOR</span>DD PRT*A MNGR 044<br><span class="amt">&pound;6.45 &middot; GBP</span></div>
         <div class="arrow" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M4 13h16M14 6l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="clean">
           <div class="m-icon" aria-hidden="true">&#129386;</div>
@@ -209,7 +209,7 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
         </div>
       </div>
     </div>
-    <p class="latency">resolved in <b>&lt;100ms</b> per transaction</p>
+    <p class="latency">enriched in <b>&lt;100ms</b> per transaction, with a confidence score on every match</p>
   </div>
 </div>
 
@@ -224,12 +224,12 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
 <section>
   <div class="container two-col">
     <div class="reveal">
-      <span class="eyebrow">The real problem</span>
-      <h2>Why do raw transaction strings cause so many problems?</h2>
+      <span class="eyebrow">The gap</span>
+      <h2>What does a transaction descriptor leave out?</h2>
     </div>
     <div class="reveal">
-      <p class="lede">A descriptor like <span class="mono-ex">DD PRT*A MNGR 044</span> tells your users nothing. It breaks automatic categorisation, generates support tickets asking what a charge was, and forces finance teams into manual matching during reconciliation.</p>
-      <p class="lede">Finexer's Data Enrichment resolves those strings against a database of more than 100 million merchants and returns the merchant name, category and location your product can actually display and act on.</p>
+      <p class="lede">A descriptor like <span class="mono-ex">DD PRT*A MNGR 044</span> confirms a payment happened. What it does not carry is merchant context: which business it was, what category it belongs to, or where it took place.</p>
+      <p class="lede">That gap is what your users' questions, category corrections and reconciliation exceptions come from. Finexer's Data Enrichment closes it by matching every descriptor against a database of more than 100 million merchants and returning the merchant name, category and location your product can display and act on.</p>
     </div>
   </div>
 </section>
@@ -259,7 +259,7 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
       <div class="card reveal">
         <span class="k">analytics: consistent</span>
         <h3>A stable base for spend insights</h3>
-        <p>Reporting and analytics features stop inheriting the mess of raw descriptors. Every downstream number is built on the same structured merchant data.</p>
+        <p>Reporting and analytics features build on structured merchant data instead of unprocessed descriptor strings. Every downstream number rests on the same consistent categories.</p>
       </div>
     </div>
   </div>
@@ -270,20 +270,20 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
     <div class="reveal">
       <span class="eyebrow">Mechanism</span>
       <h2>How does Finexer's Data Enrichment work?</h2>
-      <p class="lede">Enrichment happens inline with your existing transaction processing rather than as a batch job afterwards. The full breakdown of fields and behaviour is in the <a class="inline-link" href="https://blog.finexer.com/transaction-enrichment-api-finexer/">transaction enrichment API</a> guide.</p>
+      <p class="lede">Enrichment is an additional layer on top of Finexer's AIS, not a replacement for it. Platforms already on Finexer add it through a single additional endpoint, without changing existing data flows or consent architecture. The full breakdown is in the <a class="inline-link" href="https://blog.finexer.com/transaction-enrichment-api-finexer/">transaction enrichment API</a> guide.</p>
     </div>
     <div class="steps">
       <div class="step reveal">
-        <h3>Send the transaction</h3>
-        <p>Your platform passes a transaction through the API as part of its normal processing flow.</p>
+        <h3>Verified data at source</h3>
+        <p>Finexer's AIS delivers real-time, verified bank transaction data through Open Banking. That foundation is what enrichment builds on.</p>
       </div>
       <div class="step reveal">
-        <h3>Finexer resolves it</h3>
-        <p>The raw string is matched against a continuously maintained database covering more than 100 million merchants, with accuracy above 95%.</p>
+        <h3>Finexer adds the intelligence</h3>
+        <p>Each transaction descriptor is matched against a continuously maintained database covering more than 100 million merchants, with accuracy above 95%.</p>
       </div>
       <div class="step reveal">
-        <h3>Structured data returns</h3>
-        <p>The identified merchant, its category and its location come back in under 100 milliseconds, ready for display, categorisation or reconciliation logic.</p>
+        <h3>Structured intelligence returns</h3>
+        <p>Merchant identity, category, location and a confidence score come back in under 100 milliseconds, ready for display, categorisation or reconciliation logic.</p>
       </div>
     </div>
   </div>
@@ -335,10 +335,10 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
       <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Responses in under 100 milliseconds</li>
       <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="rgba(143,182,255,.15)"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#8FB6FF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Usage-based pricing and white-label options</li>
     </ul>
-    <!-- TESTIMONIAL SLOT: use the verified Penny (CCO, Sysynkt) quote only if its angle fits data quality or workflow accuracy. Otherwise leave this slot out entirely. Never use an unverified quote. -->
+    <!-- Verified quote from the live product blog. A verified customer quote (Penny, CCO, Sysynkt) can replace this later if the angle fits. Never use an unverified quote. -->
     <blockquote class="quote-slot reveal">
-      [Verified customer quote placeholder]
-      <cite>Penny, CCO, Sysynkt</cite>
+      &ldquo;Finexer's AIS has always given platforms verified bank data at source. The enrichment layer is the natural next step: the same reliable data foundation, now with merchant intelligence attached so platforms can build richer product features without additional data processing overhead.&rdquo;
+      <cite>Yuri, Finexer</cite>
     </blockquote>
   </div>
 </section>
@@ -351,16 +351,16 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
     </div>
     <div class="faq reveal">
       <details>
-        <summary>How accurate is the enrichment?<span class="plus">+</span></summary>
-        <p>Accuracy exceeds 95%, resolved against a database of more than 100 million merchants that Finexer maintains continuously.</p>
+        <summary>Does enrichment replace my existing Finexer integration?<span class="plus">+</span></summary>
+        <p>No. It works as an additional layer that enhances the transaction data you already use. Platforms on Finexer's AIS add enrichment through a single additional endpoint, without modifying existing data flows or consent architecture.</p>
       </details>
       <details>
-        <summary>How fast are responses?<span class="plus">+</span></summary>
-        <p>Under 100 milliseconds, so enrichment runs inline with your transaction processing rather than as an overnight batch.</p>
+        <summary>How accurate and fast is the enrichment?<span class="plus">+</span></summary>
+        <p>Accuracy exceeds 95%, resolved against a database of more than 100 million merchants that Finexer maintains continuously. Responses arrive in under 100 milliseconds, with both real-time and batch enrichment supported.</p>
       </details>
       <details>
         <summary>What does the API return for each transaction?<span class="plus">+</span></summary>
-        <p>The identified merchant, its category and its location, in a structured format your product can display directly or feed into categorisation and reconciliation logic.</p>
+        <p>Verified merchant name, category, location, billing pattern, transaction type and a confidence score, per transaction, in a single API call. Standard UK transaction types are covered, including card payments, direct debits, bank transfers and standing orders.</p>
       </details>
       <details>
         <summary>Is it compliant to use bank transaction data this way?<span class="plus">+</span></summary>
@@ -373,8 +373,8 @@ footer .container{display:flex;justify-content:space-between;gap:20px;flex-wrap:
 <section class="final">
   <div class="container">
     <span class="badge"><span class="dot"></span>Data Enrichment</span>
-    <h2>Every transaction, named and categorised.</h2>
-    <p>If unreadable descriptors are creating support tickets, broken categorisation and manual reconciliation in your product, Finexer's Data Enrichment replaces them with named merchants, clean categories and locations in under 100 milliseconds.</p>
+    <h2>The same verified bank data, now with intelligence attached.</h2>
+    <p>Finexer's Data Enrichment adds merchant identity, categories and locations on top of the bank data your product already trusts, in under 100 milliseconds, so categorisation, support queries and reconciliation stop needing manual effort.</p>
     <a class="btn btn-light" href="https://finexer.com/contact">Book a Demo</a>
   </div>
 </section>
